@@ -2,9 +2,9 @@
 
 [English](README.md) | [中文](README.zh-CN.md)
 
-Windows-first local voice prompt editor for AI coding workflows.
+Windows-first voice prompt editor for AI coding workflows.
 
-Voice Context Local turns short spoken coding notes into clean Draft prompts that can be pasted directly into Codex, ChatGPT, or another AI coding agent. It is designed for a fast local workflow: hold a hotkey, speak, let STT produce text, let a low-latency API model clean up the prompt, then auto-copy the latest Draft.
+Voice Context Local turns short spoken coding notes into clean Draft prompts that can be pasted directly into Codex, ChatGPT, or another AI coding agent. It supports local, remote, and mixed setups: hold a hotkey, speak, let STT produce text, let a low-latency editor model clean up the prompt, then auto-copy the latest Draft.
 
 > Current public release: clean no-profile MVP. Profile/project memory support is planned for a later release.
 
@@ -13,18 +13,30 @@ Voice Context Local turns short spoken coding notes into clean Draft prompts tha
 - Windows: usable and actively tested.
 - macOS/Linux: planned, not fully tested yet.
 - Default editor: API provider via OpenAI-compatible chat completions.
-- STT: local Qwen ASR provider is available; API STT presets are present for experimentation.
+- Recommended setup: local Qwen ASR for STT, API model for LLM editing/correction.
+- Local Ollama editor is available, but small local models around 3B have not been reliable enough for correction planning in testing.
 - Secrets: real API keys stay in `secrets.local.yaml`, which is ignored by git.
 
 ## Features
 
 - Hold-to-record listen mode for coding prompts.
 - Append, correction, undo, and new-batch Draft workflow.
-- API editor presets for OpenAI, DashScope/Qwen, Google Gemini OpenAI-compatible endpoint, DeepSeek, OpenRouter, and local Ollama.
-- Local Qwen ASR provider boundary for offline transcription.
+- Mixed local/remote pipeline: Qwen ASR can run locally while the editor/correction model can use an API.
+- API editor presets for OpenAI, DashScope/Qwen, Google Gemini OpenAI-compatible endpoint, DeepSeek, OpenRouter, plus optional local Ollama.
+- Qwen ASR provider boundary for local transcription.
 - Evaluation cases for append and correction behavior.
-- Local-first context files under `~/.voice_context` by default.
+- Lightweight context files under `~/.voice_context` by default.
 - No raw audio, generated logs, local samples, or secrets are committed.
+
+## Recommended Architecture
+
+For the current MVP, the recommended balance is:
+
+- STT: local Qwen ASR, because speech recognition benefits from low latency and local privacy.
+- LLM editor/correction: API model, because correction planning needs stronger instruction following than the small local models tested so far.
+- Optional: local Ollama models for experimentation or offline workflows.
+
+In testing, local models around the 3B class were acceptable for simple append cleanup but not reliable enough for correction planning. That is why the default public config uses an API editor.
 
 ## Quick Start on Windows
 
@@ -140,7 +152,7 @@ python src/main.py eval-corrections --cases eval_cases/correction --editor opena
 python src/main.py eval-corrections --cases eval_cases/correction_en --editor openai --timeout 60 --debug
 ```
 
-For local checks without an API key, `eval-append --editor rules` can verify the basic CLI path.
+For checks without an API key, `eval-append --editor rules` can verify the basic CLI path.
 
 ## Privacy
 

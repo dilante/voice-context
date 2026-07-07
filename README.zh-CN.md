@@ -2,27 +2,39 @@
 
 [English](README.md) | [中文](README.zh-CN.md)
 
-Voice Context Local 是一个 Windows-first 的本地语音 prompt 编辑工具，用于把短语音编程指令整理成可以直接发给 Codex、ChatGPT 或其他 AI coding agent 的 Draft prompt。
+Voice Context Local 是一个 Windows-first 的语音 prompt 编辑工具，用于把短语音编程指令整理成可以直接发给 Codex、ChatGPT 或其他 AI coding agent 的 Draft prompt。它可以本地运行，也可以调用远程 API，推荐按场景混合使用。
 
-当前公开版本是稳定的无 profile MVP：默认使用 API editor，本地保存轻量 context，支持录音追加、纠错、撤销和自动复制。profile / 项目长期记忆会在后续版本支持。
+当前公开版本是稳定的无 profile MVP：默认使用 API editor，保存轻量 context，支持录音追加、纠错、撤销和自动复制。profile / 项目长期记忆会在后续版本支持。
 
 ## 当前状态
 
 - Windows：可用，主要测试平台。
 - macOS/Linux：计划支持，尚未完整测试。
 - 默认 editor：API provider，OpenAI-compatible chat completions。
-- STT：已提供本地 Qwen ASR provider 边界；API STT preset 处于实验阶段。
+- 推荐组合：STT 使用本地 Qwen ASR，LLM editor/correction 使用 API 模型。
+- 本地 Ollama editor 可用，但测试中 3B 左右的小模型做 correction planning 还不够稳定。
 - 密钥：只放在 `secrets.local.yaml`，不会提交。
 
 ## 功能
 
 - 按住热键录音，生成可直接发给 AI coding agent 的 Draft。
 - 支持 append、correction、undo 和 new batch 工作流。
-- API editor preset 支持 OpenAI、DashScope/Qwen、Google Gemini OpenAI-compatible endpoint、DeepSeek、OpenRouter 和本地 Ollama。
-- 提供本地 Qwen ASR provider 边界，用于离线转写。
+- 支持本地/远程/混合 pipeline：Qwen ASR 可以本地跑，editor/correction 可以走 API。
+- API editor preset 支持 OpenAI、DashScope/Qwen、Google Gemini OpenAI-compatible endpoint、DeepSeek、OpenRouter，也支持可选本地 Ollama。
+- 提供 Qwen ASR provider 边界，用于本地转写。
 - 包含 append / correction eval cases。
-- 默认本地 context 存在 `~/.voice_context`。
+- 默认轻量 context 存在 `~/.voice_context`。
 - 不提交原始音频、生成日志、本地 sample 或密钥。
+
+## 推荐架构
+
+当前 MVP 推荐这样搭配：
+
+- STT：本地 Qwen ASR。语音转写对延迟和隐私更敏感，本地模型比较合适。
+- LLM editor/correction：API 模型。纠错规划需要更强的指令跟随能力，目前测试中 3B 左右本地小模型不够稳定。
+- 可选：Ollama / 本地 LLM 适合实验、离线流程或简单 append cleanup。
+
+因此公开版默认配置使用 API editor，同时保留本地 Qwen ASR。
 
 ## Windows 部署
 
