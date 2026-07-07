@@ -97,7 +97,13 @@ Controls:
 - Press `n`: start a new batch.
 - Press `q`: quit.
 
-Correction and undo can also be triggered by voice. For example, saying "undo", "撤销", "change the second line to ...", or "删除第一句" can route the segment to the corresponding operation. The keyboard controls are still useful as explicit shortcuts: hold `c` when you want to force correction mode, and press `u` for deterministic undo.
+Correction and undo can also be triggered by voice, but the trigger rules are intentionally strict:
+
+- Voice undo only triggers when the whole segment is essentially just an undo keyword, such as "undo" or "撤销". If the segment contains other task content, it is treated as normal append text.
+- Voice correction requires a correction prefix first, such as "纠错", followed by a short pause, then the correction content. For example: "纠错 ... delete the first sentence" or "纠错 ... 第二句改成更简洁". Without that prefix, a phrase like "change the second line to ..." is treated as append text.
+- The keywords are configurable in `config.yaml` under `voice_queue.command_keywords.undo` and `voice_queue.command_keywords.correction_prefixes`.
+
+The keyboard controls are still useful as explicit shortcuts: hold `c` when you want to force correction mode without saying a prefix, and press `u` for deterministic undo.
 
 The latest accepted Draft is copied to the clipboard when possible.
 
@@ -127,7 +133,7 @@ Most behavior is controlled by `config.yaml`:
 - `stt`: selects the speech-to-text provider.
 - `stt_providers`: STT backend settings. The recommended current setup is `qwen_local` with `Qwen/Qwen3-ASR-0.6B`.
 - `audio`: hotkeys, hold-to-record behavior, and temporary audio location.
-- `voice_queue`: language hints and command keywords for voice-triggered undo/correction.
+- `voice_queue`: language hints and command keywords for voice-triggered undo/correction. Customize `command_keywords.undo` for exact undo phrases and `command_keywords.correction_prefixes` for spoken correction prefixes.
 - `output`: clipboard behavior.
 - `debug`: replay/eval log settings. Generated logs are ignored by git.
 
