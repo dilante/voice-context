@@ -1,12 +1,12 @@
-# Voice Context Local
+# Voice Context
 
 [English](README.md) | [中文](README.zh-CN.md)
 
 Windows-first voice prompt editor for AI coding workflows.
 
-Voice Context Local turns short spoken coding notes into clean Draft prompts that can be pasted directly into Codex, ChatGPT, or another AI coding agent. It supports local, remote, and mixed setups: hold a hotkey, speak, let STT produce text, let a low-latency editor model clean up the prompt, then auto-copy the latest Draft.
+Voice Context turns short spoken coding notes into clean Draft prompts that can be pasted directly into Codex, ChatGPT, or another AI coding agent. It supports local, remote, and mixed setups: hold a hotkey, speak, let STT produce text, let a low-latency editor model clean up the prompt, then auto-copy the latest Draft.
 
-> Current public release: clean no-profile MVP. Profile/project memory support is planned for a later release.
+> Current public release: stable no-profile edition. Profile/project memory support is planned for a later release.
 
 ## Status
 
@@ -41,8 +41,8 @@ In testing, local models around the 3B class were acceptable for simple append c
 ## Quick Start on Windows
 
 ```powershell
-git clone https://github.com/dilante/voice-context-local-mvp.git
-cd voice-context-local-mvp
+git clone https://github.com/dilante/voice-context.git
+cd voice-context
 
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
