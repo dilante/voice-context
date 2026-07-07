@@ -1,0 +1,13 @@
+{
+  "name": "replace_locator_not_content_en",
+  "mode": "correction",
+  "draft_before": [
+    {"id": 1, "text": "登录页需要保留 help link。"},
+    {"id": 2, "text": "Settings panel should show the account email."}
+  ],
+  "raw_stt": "Change account email in the second sentence to workspace name.",
+  "expected_draft_after": [
+    {"id": 1, "text": "登录页需要保留 help link。"},
+    {"id": 2, "text": "Settings panel should show the workspace name."}
+  ]
+}

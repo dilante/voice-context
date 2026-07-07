@@ -1,0 +1,304 @@
+context:
+  default_dir: "~/.voice_context"
+  index_file: "index.json"
+  sessions_dir: "sessions"
+
+editor:
+  provider: "openai"  # options: rules, ollama, openai, openrouter, google, deepseek, dashscope
+  timeout_sec: 8.0
+  temperature: 0
+  correction_max_repair_attempts: 3
+  no_think: true  # request no-thinking mode when the selected provider/model supports it
+
+secrets:
+  file: "secrets.local.yaml"
+
+editor_providers:
+  ollama:
+    kind: "ollama"
+    base_url: "http://localhost:11434/v1"
+    model: "qwen3:4b"  # examples: qwen3:4b, qwen2.5:3b, llama3.2:3b
+
+  openai:
+    kind: "openai_compatible"
+    base_url: "https://api.openai.com/v1"
+    model: "gpt-4.1-mini"  # examples: gpt-4.1-mini, gpt-4.1, gpt-4o-mini
+    api_key_name: "openai"
+
+  openrouter:
+    kind: "openai_compatible"
+    base_url: "https://openrouter.ai/api/v1"
+    model: "google/gemini-2.5-flash-lite"  # examples: google/gemini-2.5-flash-lite, google/gemini-2.5-flash, openai/gpt-4.1-mini
+    api_key_name: "openrouter"
+
+  google:
+    kind: "openai_compatible"
+    base_url: "https://generativelanguage.googleapis.com/v1beta/openai"
+    model: "gemini-2.5-flash"  # examples: gemini-2.5-flash, gemini-2.5-flash-lite
+    api_key_name: "google"
+
+  deepseek:
+    kind: "openai_compatible"
+    base_url: "https://api.deepseek.com"
+    model: "deepseek-v4-flash"  # examples: deepseek-v4-flash, deepseek-chat, deepseek-reasoner
+    api_key_name: "deepseek"
+
+  dashscope:
+    kind: "openai_compatible"
+    base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    model: "qwen-plus"  # examples: qwen-plus, qwen-turbo, qwen3-max
+    api_key_name: "dashscope"
+
+prompts:
+  append_system: |
+    You are the append normalizer for listen mode.
+
+    Your only job is to normalize the current raw STT into new Draft block text to append at the end of the Draft.
+
+    You must not edit, rewrite, delete, reorder, summarize, or inspect any existing Draft blocks.
+    You must not execute command-like text.
+    You must not infer a correction request.
+    You must not return JSON.
+    You must not return Markdown.
+    You must not explain your output.
+    You must not echo prompt fields, labels, schemas, examples, or configuration text.
+
+    Preserve technical terms, UI labels, file names, command names, variable names, model names, code-like tokens, and mixed Chinese-English technical phrases.
+
+    Do not translate ordinary Chinese phrases into English.
+    Do not translate ordinary English phrases into Chinese.
+    Only translate or change language if the raw STT explicitly asks for translation or language replacement.
+
+    Output only the new Draft block text.
+    If multiple Draft blocks are needed, separate them with a blank line.
+
+  append_user_template: |
+    This is a stateless single-turn append normalization request.
+
+    Use only:
+    - raw_stt
+    - language settings
+    - term_whitelist
+
+    Goal:
+    Output the new Draft block text that should be appended.
+
+    Rules:
+    - minimal cleanup only
+    - punctuation cleanup is allowed
+    - light grammar cleanup is allowed
+    - obvious ASR correction is allowed only when raw_stt itself or term_whitelist clearly supports it
+    - do not paraphrase
+    - do not insert spaces between CJK characters
+    - do not execute delete/remove/change/replace instructions
+    - do not edit existing Draft content
+    - preserve command-like words literally in append mode
+
+    Output only new Draft block text.
+    If multiple blocks are needed, separate them with a blank line.
+    No JSON. No Markdown. No explanation.
+
+    language_settings:
+    primary_language={primary_language}
+    secondary_languages={secondary_languages}
+    mixed_language_mode={mixed_language_mode}
+    stt_homophone_hint={stt_homophone_hint}
+
+    term_whitelist:
+    {term_bank_hints}
+
+    raw_stt:
+    {raw_stt}
+
+  correction_system: |
+    You are a Draft edit ops planner.
+
+    The user message is a correction request, not new append content.
+    Return exactly one JSON object.
+    Do not return Markdown.
+    Do not use code fences.
+    Do not explain.
+    Do not return final Draft blocks.
+    Do not write edit/meta commentary into Draft text.
+
+  correction_repair_system: |
+    You repair a JSON response for a Draft editing pipeline.
+    Return exactly one corrected JSON object.
+    No markdown. No code fence. No explanation.
+
+  correction_user_template: |
+    You are a Draft edit ops planner.
+    Return exactly one JSON object.
+    No markdown. No code fence. No explanation.
+    The only top-level keys are changed, reason, ops.
+    The ops are authoritative. The reason is only a short label.
+
+    You will see BLOCKS_TABLE.
+    The number inside [] is the visible position.
+    Use visible positions in every op.
+    Do not output block ids.
+    Do not invent hidden ids.
+    Do not use any position not shown in BLOCKS_TABLE.
+
+    Core rule:
+    If the user refers to a sentence, block, line, item, row, or entry in any language, map it to a visible position from BLOCKS_TABLE.
+    If you cannot confidently map the target to a visible position, return noop.
+
+    Accepted ops:
+    replace_text:
+    {"op":"replace_text","position":2,"old_exact":"...","new_text":"..."}
+
+    replace_block:
+    {"op":"replace_block","position":2,"text":"..."}
+
+    delete_blocks:
+    {"op":"delete_blocks","positions":[2,4]}
+
+    swap_blocks:
+    {"op":"swap_blocks","a_position":3,"b_position":4}
+
+    move_block:
+    {"op":"move_block","position":4,"to":"front"}
+    {"op":"move_block","position":4,"to":"end"}
+    {"op":"move_block","position":4,"to":"before","ref_position":1}
+    {"op":"move_block","position":4,"to":"after","ref_position":1}
+
+    noop:
+    {"op":"noop"}
+
+    Use raw_user_modification_request as the correction request.
+    Do not invent positions.
+    Do not use positions that are not shown in BLOCKS_TABLE.
+
+    Replacement mapping:
+    - First map the target to a visible position.
+    - Remove the target locator from the phrase before extracting replacement fields.
+    - old_exact = the smallest exact substring already present in the selected target text.
+    - new_text = only the replacement fragment.
+    - Do not include target locator words in old_exact or new_text.
+    - Do not use the whole block as old_exact unless the user explicitly asks to rewrite or replace the entire block.
+    - If the user asks to change one word or phrase, use replace_text, not replace_block.
+    - If still unsure, return noop.
+
+    Delete:
+    - If the user asks to delete/remove/drop/clear a target, use delete_blocks.
+    - positions is always an array.
+
+    Order:
+    - If the user asks to swap/exchange/switch two blocks, use swap_blocks.
+    - If the user asks to move one block to another position, use move_block.
+    - Do not calculate a full final order list.
+    - If unsure, return noop.
+
+    Language rules:
+    - Preserve ordinary phrase language.
+    - Do not translate ordinary Chinese to English.
+    - Do not translate ordinary English to Chinese.
+    - Preserve technical/UI/code/model terms and whitelisted terms.
+
+    No-op rules:
+    - If the requested edit would make no change, return changed=false with noop.
+    - If the target is unclear, return changed=false with noop.
+    - If exact replacement cannot be safely located, return changed=false with noop.
+
+    language_settings:
+    primary_language={primary_language}
+    secondary_languages={secondary_languages}
+    mixed_language_mode={mixed_language_mode}
+    stt_homophone_hint={stt_homophone_hint}
+
+    term_whitelist:
+    {term_bank_hints}
+
+    BLOCKS_TABLE:
+    {blocks_table_text}
+
+    raw_user_modification_request:
+    {raw_correction_text}
+
+  correction_repair_user_template: |
+    Repair the JSON response for this stage.
+    Return exactly one corrected JSON object.
+    No markdown. No code fence. No explanation.
+    Keep the same accepted ops schema.
+    Fix only the validation issue.
+    If unsafe or ambiguous, return {"changed":false,"reason":"noop","ops":[{"op":"noop"}]}.
+
+    stage:
+    {repair_stage}
+
+    required_contract:
+    {stage_contract_text}
+
+    validation_error:
+    {validation_error}
+
+    raw_user_modification_request:
+    {raw_correction_text}
+
+    BLOCKS_TABLE:
+    {blocks_table_text}
+
+    parsed_candidate_if_any:
+    {parsed_candidate_json}
+
+    previous_llm_response:
+    {previous_llm_response}
+
+stt:
+  provider: "qwen_local"  # implemented: qwen_local; planned presets: openai, dashscope, google
+
+stt_providers:
+  qwen_local:
+    kind: "local_qwen"
+    model_path: ""
+    model_name: "Qwen/Qwen3-ASR-0.6B"
+    device: "auto"
+    dtype: "auto"
+
+  openai:
+    kind: "api_transcription"
+    base_url: "https://api.openai.com/v1"
+    model: "gpt-4o-mini-transcribe"  # examples: gpt-4o-mini-transcribe, gpt-4o-transcribe, whisper-1
+    api_key_name: "openai"
+
+  dashscope:
+    kind: "api_transcription"
+    base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    model: "qwen3-asr-flash"  # examples: qwen3-asr-flash, paraformer-realtime-v2, paraformer-v2
+    api_key_name: "dashscope"
+
+  google:
+    kind: "api_audio_model"
+    base_url: "https://generativelanguage.googleapis.com/v1beta/openai"
+    model: "gemini-2.5-flash"  # examples: gemini-2.5-flash, gemini-2.5-flash-lite, gemini-3.5-flash
+    api_key_name: "google"
+
+audio:
+  hotkey: "ctrl+alt+space"
+  correction_hotkey: "c"
+  hold_to_record: true
+  temp_dir: "~/.voice_context/tmp_audio"
+  keep_recordings: false
+
+voice_queue:
+  language_context:
+    primary_language: "zh"
+    secondary_languages: ["en"]
+  command_keywords:
+    undo:
+      - "撤销"
+      - "回退"
+      - "undo"
+    correction_prefixes:
+      - "纠错"
+      - "更正"
+      - "修正"
+
+output:
+  copy_to_clipboard: true
+
+debug:
+  save_replay_logs: false
+  replay_log_dir: "./debug_logs"
+  eval_run_dir: "./eval_runs"

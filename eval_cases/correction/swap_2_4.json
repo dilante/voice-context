@@ -1,0 +1,21 @@
+{
+  "name": "swap_2_4",
+  "mode": "correction",
+  "draft_before": [
+    {"id": 1, "text": "登录页需要保留 help link。"},
+    {"id": 2, "text": "Settings panel should show the account email."},
+    {"id": 3, "text": "导出流程需要显示 progress message。"},
+    {"id": 4, "text": "The preview chart uses cached data."}
+  ],
+  "raw_stt": "第二句跟第四句对调。",
+  "expected_draft_after": [
+    {"id": 1, "text": "登录页需要保留 help link。"},
+    {"id": 2, "text": "The preview chart uses cached data."},
+    {"id": 3, "text": "导出流程需要显示 progress message。"},
+    {"id": 4, "text": "Settings panel should show the account email."}
+  ],
+  "expected_ops": [
+    {"op": "swap_blocks", "a_position": 2, "b_position": 4}
+  ],
+  "notes": "swap blocks 2 and 4"
+}

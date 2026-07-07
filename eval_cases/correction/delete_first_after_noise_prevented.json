@@ -1,0 +1,12 @@
+{
+  "name": "delete_first_after_noise_prevented",
+  "mode": "correction",
+  "draft_before": [
+    {"id": 1, "text": "登录页需要保留 help link。"},
+    {"id": 2, "text": "Settings panel should show the account email."}
+  ],
+  "raw_stt": "删除第一句。",
+  "expected_draft_after": [
+    {"id": 1, "text": "Settings panel should show the account email."}
+  ]
+}

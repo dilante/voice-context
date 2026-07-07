@@ -1,0 +1,6 @@
+pyyaml
+requests
+pyperclip
+numpy
+sounddevice
+keyboard

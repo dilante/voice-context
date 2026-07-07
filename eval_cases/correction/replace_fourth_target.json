@@ -1,0 +1,18 @@
+{
+  "name": "replace_fourth_target",
+  "mode": "correction",
+  "draft_before": [
+    {"id": 1, "text": "登录页需要保留 help link。"},
+    {"id": 2, "text": "Settings panel should show the account email."},
+    {"id": 3, "text": "导出流程需要显示 progress message。"},
+    {"id": 4, "text": "The preview chart uses cached data."}
+  ],
+  "raw_stt": "第四句的 cached 改成 live。",
+  "expected_draft_after": [
+    {"id": 1, "text": "登录页需要保留 help link。"},
+    {"id": 2, "text": "Settings panel should show the account email."},
+    {"id": 3, "text": "导出流程需要显示 progress message。"},
+    {"id": 4, "text": "The preview chart uses live data."}
+  ],
+  "notes": "ordinal target should map to the fourth visible block"
+}

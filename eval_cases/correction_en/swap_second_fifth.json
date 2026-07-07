@@ -1,0 +1,19 @@
+{
+  "name": "swap_second_fifth_en",
+  "mode": "correction",
+  "draft_before": [
+    {"id": 1, "text": "The login page should keep the help link."},
+    {"id": 2, "text": "The settings panel should show the account email."},
+    {"id": 3, "text": "The export flow should show a progress message."},
+    {"id": 4, "text": "The preview chart uses cached data."},
+    {"id": 5, "text": "The error message should explain the retry action."}
+  ],
+  "raw_stt": "Swap the second and fifth sentences.",
+  "expected_draft_after": [
+    {"id": 1, "text": "The login page should keep the help link."},
+    {"id": 2, "text": "The error message should explain the retry action."},
+    {"id": 3, "text": "The export flow should show a progress message."},
+    {"id": 4, "text": "The preview chart uses cached data."},
+    {"id": 5, "text": "The settings panel should show the account email."}
+  ]
+}

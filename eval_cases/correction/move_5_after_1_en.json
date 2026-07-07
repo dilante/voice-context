@@ -1,0 +1,19 @@
+{
+  "name": "move_5_after_1_en",
+  "mode": "correction",
+  "draft_before": [
+    {"id": 1, "text": "登录页需要保留 help link。"},
+    {"id": 2, "text": "Settings panel should show the account email."},
+    {"id": 3, "text": "导出流程需要显示 progress message。"},
+    {"id": 4, "text": "The preview chart uses cached data."},
+    {"id": 5, "text": "错误提示要说明 retry action。"}
+  ],
+  "raw_stt": "Move the fifth sentence after the first sentence.",
+  "expected_draft_after": [
+    {"id": 1, "text": "登录页需要保留 help link。"},
+    {"id": 2, "text": "错误提示要说明 retry action。"},
+    {"id": 3, "text": "Settings panel should show the account email."},
+    {"id": 4, "text": "导出流程需要显示 progress message。"},
+    {"id": 5, "text": "The preview chart uses cached data."}
+  ]
+}

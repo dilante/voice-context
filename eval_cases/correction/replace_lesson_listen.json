@@ -1,0 +1,14 @@
+{
+  "name": "replace_lesson_listen",
+  "mode": "correction",
+  "draft_before": [
+    {"id": 1, "text": "登录页需要保留 help link。"},
+    {"id": 2, "text": "Settings panel should show the account email."}
+  ],
+  "raw_stt": "第一句的 help link 改成 support link。",
+  "expected_draft_after": [
+    {"id": 1, "text": "登录页需要保留 support link。"},
+    {"id": 2, "text": "Settings panel should show the account email."}
+  ],
+  "notes": "word replacement"
+}

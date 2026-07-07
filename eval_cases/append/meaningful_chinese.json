@@ -1,0 +1,9 @@
+{
+  "name": "mixed_zh_en_append",
+  "mode": "append",
+  "raw_stt": "把 onboarding guide 写得更清楚一些，API example 保留英文。",
+  "draft_before": [],
+  "expected_draft_after": [
+    {"id": 1, "text": "把 onboarding guide 写得更清楚一些，API example 保留英文。"}
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "meaningful_english_append",
+  "mode": "append",
+  "raw_stt": "Make the onboarding guide more explicit and keep the API example unchanged.",
+  "draft_before": [],
+  "expected_draft_after": [
+    {"id": 1, "text": "Make the onboarding guide more explicit and keep the API example unchanged."}
+  ]
+}

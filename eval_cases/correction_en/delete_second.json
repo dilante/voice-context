@@ -1,0 +1,14 @@
+{
+  "name": "delete_second_en",
+  "mode": "correction",
+  "draft_before": [
+    {"id": 1, "text": "The login page should keep the help link."},
+    {"id": 2, "text": "The settings panel should show the account email."},
+    {"id": 3, "text": "The export flow should show a progress message."}
+  ],
+  "raw_stt": "Delete the second sentence.",
+  "expected_draft_after": [
+    {"id": 1, "text": "The login page should keep the help link."},
+    {"id": 2, "text": "The export flow should show a progress message."}
+  ]
+}
