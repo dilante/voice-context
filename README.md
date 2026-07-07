@@ -97,6 +97,8 @@ Controls:
 - Press `n`: start a new batch.
 - Press `q`: quit.
 
+Correction and undo can also be triggered by voice. For example, saying "undo", "撤销", "change the second line to ...", or "删除第一句" can route the segment to the corresponding operation. The keyboard controls are still useful as explicit shortcuts: hold `c` when you want to force correction mode, and press `u` for deterministic undo.
+
 The latest accepted Draft is copied to the clipboard when possible.
 
 ## Provider Examples
@@ -112,6 +114,36 @@ python src/main.py listen --editor ollama --model qwen3:4b --timeout 20 --debug
 ```
 
 Provider base URLs, model names, and secret key names are configured in `config.yaml`. Only API keys belong in `secrets.local.yaml`.
+
+## Configuration Guide
+
+Most behavior is controlled by `config.yaml`:
+
+- `context`: where lightweight session/context JSON files are stored. The default is `~/.voice_context`; set `VOICE_CONTEXT_HOME` to override it.
+- `editor`: the active LLM editor preset and runtime options. `provider` selects one entry from `editor_providers`; `timeout_sec`, `temperature`, `correction_max_repair_attempts`, and `no_think` control model calls.
+- `secrets`: points to the local secrets file. Keep real API keys in `secrets.local.yaml`; do not put secrets directly in `config.yaml`.
+- `editor_providers`: named editor backends. Each preset defines `kind`, `base_url`, `model`, and `api_key_name`. Use this section to switch between OpenAI, DashScope/Qwen, Google, DeepSeek, OpenRouter, or Ollama.
+- `prompts`: runtime prompt templates for append normalization and correction planning. Most users do not need to edit these.
+- `stt`: selects the speech-to-text provider.
+- `stt_providers`: STT backend settings. The recommended current setup is `qwen_local` with `Qwen/Qwen3-ASR-0.6B`.
+- `audio`: hotkeys, hold-to-record behavior, and temporary audio location.
+- `voice_queue`: language hints and command keywords for voice-triggered undo/correction.
+- `output`: clipboard behavior.
+- `debug`: replay/eval log settings. Generated logs are ignored by git.
+
+Common edits:
+
+```yaml
+editor:
+  provider: "openai"  # options: rules, ollama, openai, openrouter, google, deepseek, dashscope
+
+editor_providers:
+  openai:
+    model: "gpt-4.1-mini"
+
+stt:
+  provider: "qwen_local"
+```
 
 ## Transcription
 

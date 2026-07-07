@@ -95,6 +95,8 @@ python src/main.py listen --editor openai --timeout 8 --debug
 - 按 `n`：新建 batch。
 - 按 `q`：退出。
 
+纠错和撤销也可以直接通过语音触发，不一定要额外按键。例如说“撤销”、“undo”、“第二句改成……”、“删除第一句”，系统会尝试把这段语音路由到对应操作。按键仍然是显式快捷入口：按住 `c` 可以强制 correction mode，按 `u` 可以确定性撤销。
+
 成功生成的最新 Draft 会尽量自动复制到剪贴板。
 
 ## 切换模型
@@ -108,6 +110,36 @@ python src/main.py listen --editor ollama --model qwen3:4b --timeout 20 --debug
 ```
 
 provider 的 base URL、model、api key 名称都在 `config.yaml` 配置；真实 key 只放 `secrets.local.yaml`。
+
+## 配置说明
+
+主要行为都在 `config.yaml` 中配置：
+
+- `context`：轻量 session/context JSON 的存储位置。默认是 `~/.voice_context`；也可以用 `VOICE_CONTEXT_HOME` 环境变量覆盖。
+- `editor`：当前 LLM editor preset 和运行参数。`provider` 选择 `editor_providers` 里的一个 preset；`timeout_sec`、`temperature`、`correction_max_repair_attempts`、`no_think` 控制模型调用。
+- `secrets`：指定本地密钥文件。真实 API key 放在 `secrets.local.yaml`，不要直接写进 `config.yaml`。
+- `editor_providers`：各个 editor backend 的配置。每个 preset 包含 `kind`、`base_url`、`model`、`api_key_name`。可以在这里切换 OpenAI、DashScope/Qwen、Google、DeepSeek、OpenRouter 或 Ollama。
+- `prompts`：append normalization 和 correction planning 的运行时 prompt 模板。大多数用户不需要改。
+- `stt`：选择 speech-to-text provider。
+- `stt_providers`：STT backend 设置。当前推荐 `qwen_local` + `Qwen/Qwen3-ASR-0.6B`。
+- `audio`：热键、按住录音行为、临时音频目录。
+- `voice_queue`：语言提示和语音触发 undo/correction 的关键词。
+- `output`：剪贴板输出行为。
+- `debug`：replay/eval 日志设置。生成日志默认被 git 忽略。
+
+常见修改：
+
+```yaml
+editor:
+  provider: "openai"  # 可选：rules, ollama, openai, openrouter, google, deepseek, dashscope
+
+editor_providers:
+  openai:
+    model: "gpt-4.1-mini"
+
+stt:
+  provider: "qwen_local"
+```
 
 ## 转写
 
