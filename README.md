@@ -30,7 +30,7 @@ Voice Context turns short spoken coding notes into clean Draft prompts that can 
 
 ## Recommended Architecture
 
-For the current MVP, the recommended balance is:
+For the current release, the recommended balance is:
 
 - STT: local Qwen ASR, because speech recognition benefits from low latency and local privacy.
 - LLM editor/correction: API model, because correction planning needs stronger instruction following than the small local models tested so far.
